@@ -2,6 +2,7 @@ package com.example;
 
 import com.example.DAO.CarDAO;
 import com.example.Model.Car;
+import com.example.Model.ListOfCars;
 
 import javax.swing.*;
 import java.sql.SQLException;
@@ -12,16 +13,7 @@ public class Main
 {
     public static void main(String[] args) throws SQLException
     {
-
-        HashMap<String, Car> listOfCars = new HashMap<>();
-        ArrayList<Car> cars = new CarDAO().loadAllCars();
-
-        for (Car car:cars)
-        {
-            listOfCars.put(car.getLicensePlate(),car);
-        }
-
-
+        new CarDAO().loadAllCars();
 
         System.out.println("Welcome To CRD Car Reservation System What Would You Like To Do?\n" +
                 "1) Create A Reservation\n" +
@@ -31,7 +23,7 @@ public class Main
                 "5) Quit\n");
 
 
-        for (Car car:listOfCars.values())
+        for (Car car: ListOfCars.getInstance().getListOfCarsByLicensePlate().values())
         {
             String carListString = "";
             if (car.isInUse())

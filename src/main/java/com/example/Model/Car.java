@@ -66,6 +66,15 @@ public class Car
         return (newMiles- milesOnCar) > allowedMiles;
     }
 
+
+    public double getMaxFuelCapacity()
+    {
+        return maxFuelCapacity;
+    }
+    public FuelTypeBehavior getFuelTypeBehavior()
+    {
+        return fuelTypeBehavior;
+    }
     public String getLicensePlate()
     {
         return  licensePlate;
@@ -85,4 +94,10 @@ public class Car
     {
         return milesOnCar;
     }
+
+    public String getCarModel()
+    {
+        return carModel;
+    }
+
 }

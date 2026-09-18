@@ -1,6 +1,7 @@
 package com.example.DAO;
 
 import com.example.Model.Car;
+import com.example.Model.ListOfCars;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,9 +16,8 @@ public class CarDAO
 
 
 
-    public ArrayList<Car> loadAllCars() throws SQLException
+    public void loadAllCars() throws SQLException
     {
-        ArrayList<Car> returnList = new ArrayList<>();
         sqlQuery = "Select * From cars";
         try(Connection connection = JDBC.getConnection())
         {
@@ -34,7 +34,9 @@ public class CarDAO
                 String fuelType = resultSet.getString("car_fuel_type");
                 boolean carInUse = resultSet.getBoolean("car_in_use");
 
-                returnList.add(new Car(milesOnCar,carModel,carLicensePlate,carMaxFuelCapacity,carType,fuelType,carInUse));
+                ListOfCars.getInstance().addCar(
+                        (new Car(milesOnCar,carModel,carLicensePlate,carMaxFuelCapacity,carType,fuelType,carInUse)),
+                        resultSet.getInt("car_id"));
             }
 
         }
@@ -43,6 +45,6 @@ public class CarDAO
             System.out.println(e);
         }
 
-        return returnList;
     }
+
 }
