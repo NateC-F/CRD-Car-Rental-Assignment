@@ -85,7 +85,11 @@ public class Car
 
     public String toString()
     {
-        return carModel + ", fuel tank of: " + maxFuelCapacity+" units," + " license plate: " + licensePlate;
+        String available="";
+        if (!isInUse())
+            available = " this vehicle is currently available";
+        else available = "this vehicle is currently unavailable";
+        return carModel + "("+carType+")"+", fuel tank of: " + maxFuelCapacity+" units," + " license plate: " + licensePlate + available;
     }
 
     public boolean isInUse()
@@ -103,4 +107,8 @@ public class Car
         return carModel;
     }
 
+    public CarType getCarType()
+    {
+        return carType;
+    }
 }

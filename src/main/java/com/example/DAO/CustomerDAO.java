@@ -32,22 +32,41 @@ public class CustomerDAO
         return null;
     }
 
+    public int getCustomerIdFromLicense(String license)
+    {
+        sqlQuery = "SELECT * FROM customers WHERE customer_license = ?";
 
-    public Customer getCustomerByID(int idInDatabase)
+        try(Connection connection = JDBC.getConnection())
+        {
+            statement = connection.prepareStatement(sqlQuery);
+            statement.setString(1,license);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next())
+            {
+                return resultSet.getInt("customer_id");
+            }
+
+        } catch (Exception e)
+        {
+            System.out.println(e);
+        }
+        return -1;
+    }
+
+    public Customer getCustomerFromDatabaseId(int id)
     {
         sqlQuery = "SELECT * FROM customers WHERE customer_id = ?";
 
         try(Connection connection = JDBC.getConnection())
         {
             statement = connection.prepareStatement(sqlQuery);
-            statement.setInt(1,idInDatabase);
+            statement.setInt(1,id);
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next())
             {
-                String name = resultSet.getString("customer_name");
-                String license = resultSet.getString("customer_license");
-                return new Customer(name,license);
+                return new Customer(resultSet.getString("customer_name"),resultSet.getString("customer_license"));
             }
 
         } catch (Exception e)

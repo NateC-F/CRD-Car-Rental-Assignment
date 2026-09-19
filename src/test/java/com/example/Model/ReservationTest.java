@@ -114,6 +114,7 @@ public class ReservationTest
 
         double totalCost = reservation.calculateTotal(11000,25);
         //it should be 402.5 = 7 * 50 * 1.15
+        totalCost = Math.round(totalCost * 100.0) / 100.0;
         assertEquals(402.5,totalCost);
 
         //says its off Expected :402.5

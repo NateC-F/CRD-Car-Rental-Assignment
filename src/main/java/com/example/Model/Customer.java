@@ -15,4 +15,9 @@ public class Customer
     {
         return customerName;
     }
+
+    public String getCustomerLicense()
+    {
+        return customerLicense;
+    }
 }

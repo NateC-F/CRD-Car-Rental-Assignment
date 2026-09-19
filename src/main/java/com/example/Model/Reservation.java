@@ -11,7 +11,7 @@ public class Reservation
     private Date startOfReserve;
     private Date endOfReserve;
     private Date dateReturned;
-    private int invoiceNumber;
+    private Integer invoiceNumber;
     private boolean isLate;
     private double amountPaid;
     private final int COST_PER_DAY_NOT_LATE = 50;
@@ -20,7 +20,7 @@ public class Reservation
     private final double EXCESSIVE_MILLAGE_FLAT_FEE = 1.15;
 
     public Reservation(Car car, Customer customer, Date startOfReserve,
-                       Date endOfReserve, Date dateReturned, int invoiceNumber, boolean isLate)
+                       Date endOfReserve, Date dateReturned, Integer invoiceNumber, boolean isLate)
     {
         this.car = car;
         this.customer = customer;
@@ -97,8 +97,38 @@ public class Reservation
         else daysUsedCost = totalDaysUsed * COST_PER_DAY_NOT_LATE;
 
         amountPaid = (fuelCost + daysUsedCost) * excessiveMileFee;
+        amountPaid = Math.round(amountPaid * 100.0) / 100.0;
 
         return amountPaid;
     }
 
+    public void setInvoiceNumber(int invoiceNumber)
+    {
+        this.invoiceNumber = invoiceNumber;
+    }
+
+    public Car getCar()
+    {
+        return car;
+    }
+
+    public Date getStartOfReserve()
+    {
+        return startOfReserve;
+    }
+
+    public Date getEndOfReserve()
+    {
+        return endOfReserve;
+    }
+
+    public Date getDateReturned()
+    {
+        return dateReturned;
+    }
+
+    public int getInvoiceNumber()
+    {
+        return invoiceNumber;
+    }
 }

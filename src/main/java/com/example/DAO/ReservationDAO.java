@@ -46,10 +46,11 @@ public class ReservationDAO
                 Date dateReturned = resultSet.getDate("actual_return_date");
                 Boolean isLate = resultSet.getBoolean("is_late");
                 Car car = ListOfCars.getInstance().searchCarById(resultSet.getInt("car_id"));
-                int numberOfDaysRenting = (int) ChronoUnit.DAYS.between((Temporal) reservationStart, (Temporal) reservationEnd);
-                Customer customer = new CustomerDAO().getCustomerByID(resultSet.getInt("customer_id"));
+                Customer customer = new CustomerDAO().getCustomerFromDatabaseId(resultSet.getInt("customer_id"));
 
                 Reservation reservation = new Reservation(car,customer,reservationStart,reservationEnd,dateReturned,invoiceNumber,isLate);
+
+                return reservation;
             }
         }
         catch (Exception e)
@@ -61,7 +62,7 @@ public class ReservationDAO
     }
 
 
-    public void createReservation(int carID,int customerID, Date startDay, Date endDay)
+    public int createReservation(int carID,int customerID, Date startDay, Date endDay)
     {
         sqlQuery = "INSERT INTO reservations" +
                 "(customer_id, car_id, reservation_start, reservation_end)" +
@@ -69,19 +70,26 @@ public class ReservationDAO
 
         try(Connection connection = JDBC.getConnection())
         {
-            statement = connection.prepareStatement(sqlQuery);
+            statement = connection.prepareStatement(sqlQuery,PreparedStatement.RETURN_GENERATED_KEYS);
             statement.setInt(1,customerID);
             statement.setInt(2,carID);
             statement.setDate(3,startDay);
             statement.setDate(4,endDay);
 
             statement.executeUpdate();
+            try (ResultSet generatedKeys = statement.getGeneratedKeys())
+            {
+                if (generatedKeys.next())
+                {
+                    return generatedKeys.getInt(1);
+                }
+            }
         }
         catch (Exception e)
         {
             System.out.println(e);
         }
-
+        return -1;
     }
 
 
