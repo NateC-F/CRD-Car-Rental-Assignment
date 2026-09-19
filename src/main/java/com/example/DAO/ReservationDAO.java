@@ -96,7 +96,7 @@ public class ReservationDAO
                 "SELECT COUNT(*) FROM reservations " +
                         "WHERE car_id = ? " +
                         "AND reservation_start < ? " +
-                        "AND reservation_end > ?";
+                        "AND reservation_end >= ?";
 
         try (Connection connection = JDBC.getConnection();
              PreparedStatement statement = connection.prepareStatement(sqlQuery))
