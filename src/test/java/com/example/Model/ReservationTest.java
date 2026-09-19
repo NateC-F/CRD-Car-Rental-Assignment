@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ReservationTest
 {
 
-    //Car car = new Car(10000,"2013 Honda Civic", "ABC123", 25.00, "SEDAN", "GAS", false);
+    //Car car = new Car(10000,"2013 Honda Civic", "ABC123", 25.00, "SEDAN", "GAS", false,1);
     //Customer customer = new Customer("John Doe", "S123456789");
 
     @Test
@@ -17,7 +17,7 @@ public class ReservationTest
     {
         System.out.println();
         Car car = new Car(10000,"2013 Honda Civic", "ABC123",
-                25.00, "SEDAN", "GAS", false);
+                25.00, "SEDAN", "GAS", false,1);
         Customer customer = new Customer("John Doe", "S123456789");
 
         Reservation reservation = new Reservation(car, customer,  Date.valueOf("2026-09-10"),
@@ -30,7 +30,7 @@ public class ReservationTest
     {
         System.out.println();
         Car car = new Car(10000,"2013 Honda Civic", "ABC123",
-                25.00, "SEDAN", "GAS", false);
+                25.00, "SEDAN", "GAS", false,1);
         Customer customer = new Customer("John Doe", "S123456789");
 
         Reservation reservation = new Reservation(car, customer,  Date.valueOf("2026-09-10"),
@@ -43,7 +43,7 @@ public class ReservationTest
     {
         System.out.println();
         Car car = new Car(10000,"2013 Honda Civic", "ABC123",
-                25.00, "SEDAN", "GAS", false);
+                25.00, "SEDAN", "GAS", false,1);
         Customer customer = new Customer("John Doe", "S123456789");
 
         Reservation reservation = new Reservation(car, customer,  Date.valueOf("2026-09-10"),
@@ -57,7 +57,7 @@ public class ReservationTest
     {
         System.out.println();
         Car car = new Car(10000,"2013 Honda Civic", "ABC123",
-                25.00, "SEDAN", "GAS", false);
+                25.00, "SEDAN", "GAS", false,1);
         Customer customer = new Customer("John Doe", "S123456789");
         Reservation reservation = new Reservation(car, customer,  Date.valueOf("2026-09-10"),
                 Date.valueOf("2026-09-17"),Date.valueOf("2026-09-20"),123,false);
@@ -71,7 +71,7 @@ public class ReservationTest
     {
         System.out.println();
         Car car = new Car(10000,"2013 Honda Civic", "ABC123",
-                25.00, "SEDAN", "GAS", false);
+                25.00, "SEDAN", "GAS", false,1);
         Customer customer = new Customer("John Doe", "S123456789");
 
         Reservation reservation = new Reservation(car, customer,  Date.valueOf("2026-09-10"),
@@ -88,7 +88,7 @@ public class ReservationTest
     {
         System.out.println();
         Car car = new Car(10000,"2013 Honda Civic", "ABC123",
-                25.00, "SEDAN", "GAS", false);
+                25.00, "SEDAN", "GAS", false,1);
         Customer customer = new Customer("John Doe", "S123456789");
 
         Reservation reservation = new Reservation(car, customer,  Date.valueOf("2026-09-10"),
@@ -105,7 +105,7 @@ public class ReservationTest
     {
         System.out.println();
         Car car = new Car(10000,"2013 Honda Civic", "ABC123",
-                25.00, "SEDAN", "GAS", false);
+                25.00, "SEDAN", "GAS", false,1);
         Customer customer = new Customer("John Doe", "S123456789");
 
         Reservation reservation = new Reservation(car, customer,  Date.valueOf("2026-09-10"),
@@ -127,7 +127,7 @@ public class ReservationTest
     {
         System.out.println();
         Car car = new Car(10000,"2013 Honda Civic", "ABC123",
-                25.00, "SEDAN", "GAS", false);
+                25.00, "SEDAN", "GAS", false,1);
         Customer customer = new Customer("John Doe", "S123456789");
 
         Reservation reservation = new Reservation(car, customer,  Date.valueOf("2026-09-10"),

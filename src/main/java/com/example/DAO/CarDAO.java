@@ -32,10 +32,10 @@ public class CarDAO
                 String carType = resultSet.getString("car_type");
                 String fuelType = resultSet.getString("car_fuel_type");
                 boolean carInUse = resultSet.getBoolean("car_in_use");
+                Integer id = resultSet.getInt("car_id");
 
                 ListOfCars.getInstance().addCar(
-                        (new Car(milesOnCar,carModel,carLicensePlate,carMaxFuelCapacity,carType,fuelType,carInUse)),
-                        resultSet.getInt("car_id"));
+                        (new Car(milesOnCar,carModel,carLicensePlate,carMaxFuelCapacity,carType,fuelType,carInUse,id)), id);
             }
 
         }

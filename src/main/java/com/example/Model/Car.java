@@ -14,11 +14,12 @@ public class Car
     private FuelTypeBehavior fuelTypeBehavior;
     private final double CAR_RETURN_FUEL_PERCENTAGE_THRESHOLD = .95;
     private boolean inUse;
+    private int databaseID;
 
     //================================================================================
 
 
-    public Car (int milesOnCar, String carModel, String licensePlate, double maxFuelCapacity, String carType, String fuelType, boolean inUse)
+    public Car (int milesOnCar, String carModel, String licensePlate, double maxFuelCapacity, String carType, String fuelType, boolean inUse, int databaseID)
     {
         this.milesOnCar = milesOnCar;
         this.carModel = carModel;
@@ -27,6 +28,7 @@ public class Car
         this.carType = CarType.valueOf(carType);
         this.fuelType = FuelType.valueOf(fuelType);
         this.inUse = inUse;
+        this.databaseID = databaseID;
         switch (this.fuelType)
         {
             case GAS:
@@ -110,5 +112,10 @@ public class Car
     public CarType getCarType()
     {
         return carType;
+    }
+
+    public int getDatabaseID()
+    {
+        return databaseID;
     }
 }

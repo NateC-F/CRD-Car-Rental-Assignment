@@ -92,5 +92,62 @@ public class ReservationDAO
         return -1;
     }
 
+    public boolean isCarReserved(Car car, Date startDate, Date endDate)
+    {
+        String sqlQuery =
+                "SELECT COUNT(*) FROM reservations " +
+                        "WHERE car_id = ? " +
+                        "AND reservation_start < ? " +
+                        "AND reservation_end > ?";
+
+        try (Connection connection = JDBC.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sqlQuery))
+        {
+            statement.setInt(1, car.getDatabaseID());
+            statement.setDate(2, endDate);
+            statement.setDate(3, startDate);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next())
+            {
+                return resultSet.getInt(1) > 0;
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+        }
+
+        return false;
+    }
+
+    public boolean customerHasActiveReservation(int customerId)
+    {
+        String sqlQuery =
+                "SELECT COUNT(*) FROM reservations " +
+                        "WHERE customer_id = ? " +
+                        "AND actual_return_date IS NULL";
+
+        try (Connection connection = JDBC.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sqlQuery))
+        {
+            statement.setInt(1, customerId);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next())
+            {
+                return resultSet.getInt(1) > 0;
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+        }
+
+        return false;
+    }
+
 
 }

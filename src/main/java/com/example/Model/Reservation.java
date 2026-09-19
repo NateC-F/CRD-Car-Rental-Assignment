@@ -1,5 +1,7 @@
 package com.example.Model;
 
+import com.example.DAO.ReservationDAO;
+
 import java.sql.Date;
 import java.time.temporal.ChronoUnit;
 
@@ -52,20 +54,26 @@ public class Reservation
     {
         String lateString;
 
-        if (dateReturned == null) {
-            // Car is still being rented
-            if (currentDate.after(endOfReserve)) {
+        // Reservation has not started yet
+        if (currentDate.before(startOfReserve))
+            lateString = "reservation has not started yet";
+
+        // Car is still being rented
+        if (dateReturned == null)
+        {
+            if (currentDate.after(endOfReserve))
                 lateString = "is still actively being used but is late";
-            } else {
+            else
                 lateString = "is still actively being used but is not late";
-            }
-        } else {
-            // Car has been returned
-            if (dateReturned.after(endOfReserve)) {
+        }
+
+        // Car has been returned
+        else
+        {
+            if (dateReturned.after(endOfReserve))
                 lateString = "has been returned late";
-            } else {
+            else
                 lateString = "has been returned on time";
-            }
         }
         return lateString;
     }
@@ -101,6 +109,30 @@ public class Reservation
 
         return amountPaid;
     }
+
+
+    public boolean validateReservationDates(Car car, Date startDate, Date endDate)
+    {
+        if (startDate == null || endDate == null)
+        {
+            return false;
+        }
+
+        if (startDate.after(endDate))
+        {
+            return false;
+        }
+
+        if (new ReservationDAO().isCarReserved(car, startDate, endDate))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+
+
 
     public void setInvoiceNumber(int invoiceNumber)
     {

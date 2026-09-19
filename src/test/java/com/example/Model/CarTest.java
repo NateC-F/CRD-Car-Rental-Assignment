@@ -8,13 +8,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CarTest
 {
 
-    //Car car = new Car(10000,"2013 Honda Civic", "ABC123", 25.00, "SEDAN", "GAS", false);
+    //Car car = new Car(10000,"2013 Honda Civic", "ABC123", 25.00, "SEDAN", "GAS", false,1);
 
     @Test
     void testReserveCar()
     {
         Car car = new Car(10000,"2013 Honda Civic", "ABC123",
-                25.00, "SEDAN", "GAS", false);
+                25.00, "SEDAN", "GAS", false,1);
 
         car.reserveCar();
 
@@ -25,7 +25,7 @@ public class CarTest
    void testReturnCar()
    {
        Car car = new Car(10000,"2013 Honda Civic", "ABC123",
-           25.00, "SEDAN", "GAS", true);
+           25.00, "SEDAN", "GAS", true,1);
 
        car.returnCar(23809);
 
@@ -37,7 +37,7 @@ public class CarTest
     void testRefillCarAbove95Percent()
    {
        Car car = new Car(10000,"2013 Honda Civic", "ABC123",
-               25.00, "SEDAN", "GAS", true);
+               25.00, "SEDAN", "GAS", true,1);
 
        assertFalse(car.doesCarNeedToBeRefilled(24.5));
    }
@@ -45,7 +45,7 @@ public class CarTest
     void testRefillCarBelow95Percent()
     {
         Car car = new Car(10000,"2013 Honda Civic", "ABC123",
-                25.00, "SEDAN", "GAS", true);
+                25.00, "SEDAN", "GAS", true,1);
 
         assertTrue(car.doesCarNeedToBeRefilled(10));
     }
@@ -54,7 +54,7 @@ public class CarTest
     void testExtraMilesAboveLimit()
     {
         Car car = new Car(10000,"2013 Honda Civic", "ABC123",
-                25.00, "SEDAN", "GAS", true);
+                25.00, "SEDAN", "GAS", true,1);
 
         assertTrue(car.hasExtraMiles(10600, 500));
     }
@@ -63,7 +63,7 @@ public class CarTest
     void testExtraMilesBelowLimit()
     {
         Car car = new Car(10000,"2013 Honda Civic", "ABC123",
-                25.00, "SEDAN", "GAS", true);
+                25.00, "SEDAN", "GAS", true,1);
 
         assertFalse(car.hasExtraMiles(10600, 1000));
     }

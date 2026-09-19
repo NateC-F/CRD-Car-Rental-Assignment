@@ -1,5 +1,7 @@
 package com.example.Model;
 
+import com.example.DAO.CustomerDAO;
+
 public class Customer
 {
     private String customerName;
@@ -20,4 +22,10 @@ public class Customer
     {
         return customerLicense;
     }
+
+    public void saveCustomerToDatabase()
+    {
+        new CustomerDAO().createCustomerRecord(customerName,customerLicense);
+    }
+
 }
