@@ -365,6 +365,66 @@ VALUES
         '2026-09-22'
     );
 
+    -- ============================================================
+-- Test 6: ON-TIME RETURN WITH EXCESSIVE MILEAGE
+-- ============================================================
+--
+-- Reservation: Sept 20 -> Sept 22
+-- Returning on Sept 22 = on time
+--
+-- Car: Ford Escape (HYBRID)
+-- Starting mileage: 22,109
+-- Tank capacity: 14.2 gallons
+--
+-- Test mileage: 22,800 (691 miles)
+-- Fuel: 14.2 gallons
+--
+-- Expected:
+-- 2 rental days
+-- 2 * $50 = $100
+--
+-- Mileage allowance:
+-- 100 miles/day * 2 days = 200 miles
+--
+-- Actual mileage:
+-- 22,800 - 22,109 = 691 miles
+--
+-- Excessive mileage:
+-- 691 > 200
+-- Therefore the 1.15 excessive mileage multiplier applies.
+--
+-- Fuel:
+-- Full tank = no fuel charge
+--
+-- Expected total:
+-- $100 * 1.15 = $115.00
+-- ============================================================
+
+INSERT INTO customers (customer_name, customer_license)
+VALUES
+    ('Excessive Mileage Customer', 'MILES001');
+
+INSERT INTO reservations
+    (customer_id, car_id, reservation_start, reservation_end)
+VALUES
+    (
+        (SELECT customer_id
+         FROM customers
+         WHERE customer_license = 'MILES001'),
+
+        (SELECT car_id
+         FROM cars
+         WHERE car_license_plate = 'VWX802'),
+
+        '2026-09-20',
+        '2026-09-22'
+    );
+
+
+UPDATE cars
+SET car_in_use = TRUE
+WHERE car_license_plate = 'VWX802';
+
 
 -- ============================================================
 -- MAKE THE TEST CARS CURRENTLY IN USE
