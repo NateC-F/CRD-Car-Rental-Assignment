@@ -42,7 +42,7 @@ public class Reservation
 
         String lateString = getLateString(currentDate);
 
-        String toString = "Invoice Number: " +invoiceNumber + "\nIs A "+ car.getCarModel()+
+        String toString = "Invoice Number: " +invoiceNumber + "\nIs A "+ car.getCarModel()+", License Plate: "+car.getLicensePlate()+
                 "\nAnd Is Being Rented By: " + customer.getCustomerName()+
                 "\nAnd Is Being Rented From " + startOfReserve +" to " + endOfReserve+
                 "\nCurrently the car " +lateString;

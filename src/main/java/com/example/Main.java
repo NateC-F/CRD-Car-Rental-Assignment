@@ -265,6 +265,7 @@ public class Main
         System.out.println("========================");
     }
 
+
     private static void lookupReservation(Scanner scanner)
     {
         System.out.println("========================");
@@ -276,8 +277,10 @@ public class Main
         while(!scanner.hasNextInt())
         {
             System.out.println("Enter numbers only please");
+            scanner.next();
         }
         Integer invoiceNumber = scanner.nextInt();
+        scanner.nextLine();
 
         Reservation reservation = new ReservationDAO().lookUpReservation(ReservationSearchType.INVOICE,String.valueOf(invoiceNumber.intValue()));
 
