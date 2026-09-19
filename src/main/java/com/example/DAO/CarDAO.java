@@ -47,4 +47,25 @@ public class CarDAO
 
     }
 
+    public void saveChangeOnCar(Car carToUpdate)
+    {
+        sqlQuery = "UPDATE cars SET car_miles = ?, car_in_use = ? WHERE car_license_plate = ?";
+
+        try(Connection connection = JDBC.getConnection())
+        {
+            statement = connection.prepareStatement(sqlQuery);
+            statement.setString(3, carToUpdate.getLicensePlate());
+            statement.setBoolean(2,carToUpdate.isInUse());
+            statement.setInt(1, carToUpdate.getMilesOnCar());
+
+            statement.executeUpdate();
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+        }
+
+    }
+
+
 }

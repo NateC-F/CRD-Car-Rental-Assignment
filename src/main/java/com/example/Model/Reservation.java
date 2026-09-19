@@ -19,14 +19,14 @@ public class Reservation
     private final int MILLAGE_ALLOWED_PER_DAY = 100;
     private final double EXCESSIVE_MILLAGE_FLAT_FEE = 1.15;
 
-    public Reservation(Car car, Customer customer, int numberOfDaysRenting, Date startOfReserve,
+    public Reservation(Car car, Customer customer, Date startOfReserve,
                        Date endOfReserve, Date dateReturned, int invoiceNumber, boolean isLate)
     {
         this.car = car;
         this.customer = customer;
-        this.numberOfDaysRenting = numberOfDaysRenting;
         this.startOfReserve = startOfReserve;
         this.endOfReserve = endOfReserve;
+        numberOfDaysRenting =(int) ChronoUnit.DAYS.between(startOfReserve.toLocalDate(), endOfReserve.toLocalDate());
         this.dateReturned = dateReturned;
         this.invoiceNumber = invoiceNumber;
         this.isLate = isLate;
@@ -42,8 +42,8 @@ public class Reservation
 
         String toString = "Invoice Number: " +invoiceNumber + "\nIs A "+ car.getCarModel()+
                 "\nAnd Is Being Rented By: " + customer.getCustomerName()+
-                "And Is Being Rented From " + startOfReserve +" to " + endOfReserve+
-                "Currently the car " +lateString;
+                "\nAnd Is Being Rented From " + startOfReserve +" to " + endOfReserve+
+                "\nCurrently the car " +lateString;
 
         return toString;
     }
@@ -96,11 +96,9 @@ public class Reservation
         }
         else daysUsedCost = totalDaysUsed * COST_PER_DAY_NOT_LATE;
 
-
         amountPaid = (fuelCost + daysUsedCost) * excessiveMileFee;
 
         return amountPaid;
     }
-
 
 }

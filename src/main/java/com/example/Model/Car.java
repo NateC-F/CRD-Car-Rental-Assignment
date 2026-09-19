@@ -1,5 +1,6 @@
 package com.example.Model;
 
+import com.example.DAO.CarDAO;
 import com.example.Model.FuelBehavior.*;
 
 public class Car
@@ -48,12 +49,14 @@ public class Car
     public void reserveCar()
     {
         inUse = true;
+        new CarDAO().saveChangeOnCar(this);
     }
 
     public void returnCar(int newMiles)
     {
         milesOnCar = newMiles;
         inUse = false;
+        new CarDAO().saveChangeOnCar(this);
     }
 
     public boolean doesCarNeedToBeRefilled(double currentTankLevel)

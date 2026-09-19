@@ -49,7 +49,7 @@ public class ReservationDAO
                 int numberOfDaysRenting = (int) ChronoUnit.DAYS.between((Temporal) reservationStart, (Temporal) reservationEnd);
                 Customer customer = new CustomerDAO().getCustomerByID(resultSet.getInt("customer_id"));
 
-                Reservation reservation = new Reservation(car,customer,numberOfDaysRenting,reservationStart,reservationEnd,dateReturned,invoiceNumber,isLate);
+                Reservation reservation = new Reservation(car,customer,reservationStart,reservationEnd,dateReturned,invoiceNumber,isLate);
             }
         }
         catch (Exception e)
@@ -59,5 +59,30 @@ public class ReservationDAO
 
         return null;
     }
+
+
+    public void createReservation(int carID,int customerID, Date startDay, Date endDay)
+    {
+        sqlQuery = "INSERT INTO reservations" +
+                "(customer_id, car_id, reservation_start, reservation_end)" +
+                "VALUES (?,?,?,?)";
+
+        try(Connection connection = JDBC.getConnection())
+        {
+            statement = connection.prepareStatement(sqlQuery);
+            statement.setInt(1,customerID);
+            statement.setInt(2,carID);
+            statement.setDate(3,startDay);
+            statement.setDate(4,endDay);
+
+            statement.executeUpdate();
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+        }
+
+    }
+
 
 }

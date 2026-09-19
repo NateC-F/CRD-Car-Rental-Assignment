@@ -7,6 +7,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class CarTest
 {
+
+    //Car car = new Car(10000,"2013 Honda Civic", "ABC123", 25.00, "SEDAN", "GAS", false);
+
     @Test
     void testReserveCar()
     {
