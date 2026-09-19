@@ -21,7 +21,7 @@ public class ReservationTest
         Customer customer = new Customer("John Doe", "S123456789");
 
         Reservation reservation = new Reservation(car, customer,  Date.valueOf("2026-09-10"),
-                Date.valueOf("2026-09-17"),null,123,true);
+                Date.valueOf("2026-09-17"),null,123,true,null);
 
         System.out.println(reservation.toString());
     }
@@ -34,7 +34,7 @@ public class ReservationTest
         Customer customer = new Customer("John Doe", "S123456789");
 
         Reservation reservation = new Reservation(car, customer,  Date.valueOf("2026-09-10"),
-                Date.valueOf("2026-09-20"),null,123,false);
+                Date.valueOf("2026-09-20"),null,123,false,null);
 
         System.out.println(reservation.toString());
     }
@@ -47,7 +47,7 @@ public class ReservationTest
         Customer customer = new Customer("John Doe", "S123456789");
 
         Reservation reservation = new Reservation(car, customer,  Date.valueOf("2026-09-10"),
-                Date.valueOf("2026-09-17"),Date.valueOf("2026-09-17"),123,false);
+                Date.valueOf("2026-09-17"),Date.valueOf("2026-09-17"),123,false,null);
 
         System.out.println(reservation.toString());
     }
@@ -60,7 +60,7 @@ public class ReservationTest
                 25.00, "SEDAN", "GAS", false,1);
         Customer customer = new Customer("John Doe", "S123456789");
         Reservation reservation = new Reservation(car, customer,  Date.valueOf("2026-09-10"),
-                Date.valueOf("2026-09-17"),Date.valueOf("2026-09-20"),123,false);
+                Date.valueOf("2026-09-17"),Date.valueOf("2026-09-20"),123,false,null);
 
         System.out.println(reservation.toString());
     }
@@ -75,7 +75,7 @@ public class ReservationTest
         Customer customer = new Customer("John Doe", "S123456789");
 
         Reservation reservation = new Reservation(car, customer,  Date.valueOf("2026-09-10"),
-                Date.valueOf("2026-09-17"),Date.valueOf("2026-09-17"),123,false);
+                Date.valueOf("2026-09-17"),Date.valueOf("2026-09-17"),123,false,null);
 
 
         double totalCost = reservation.calculateTotal(10500,25);
@@ -92,7 +92,7 @@ public class ReservationTest
         Customer customer = new Customer("John Doe", "S123456789");
 
         Reservation reservation = new Reservation(car, customer,  Date.valueOf("2026-09-10"),
-                Date.valueOf("2026-09-17"),Date.valueOf("2026-09-17"),123,true);
+                Date.valueOf("2026-09-17"),Date.valueOf("2026-09-17"),123,true,null);
 
 
         double totalCost = reservation.calculateTotal(10500,25);
@@ -109,7 +109,7 @@ public class ReservationTest
         Customer customer = new Customer("John Doe", "S123456789");
 
         Reservation reservation = new Reservation(car, customer,  Date.valueOf("2026-09-10"),
-                Date.valueOf("2026-09-17"),Date.valueOf("2026-09-17"),123,false);
+                Date.valueOf("2026-09-17"),Date.valueOf("2026-09-17"),123,false,null);
 
 
         double totalCost = reservation.calculateTotal(11000,25);
@@ -131,7 +131,7 @@ public class ReservationTest
         Customer customer = new Customer("John Doe", "S123456789");
 
         Reservation reservation = new Reservation(car, customer,  Date.valueOf("2026-09-10"),
-                Date.valueOf("2026-09-17"),Date.valueOf("2026-09-17"),123,false);
+                Date.valueOf("2026-09-17"),Date.valueOf("2026-09-17"),123,false,null);
 
 
         double totalCost = reservation.calculateTotal(11000,20);

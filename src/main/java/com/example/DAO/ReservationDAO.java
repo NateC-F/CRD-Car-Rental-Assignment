@@ -2,10 +2,7 @@ package com.example.DAO;
 
 import com.example.Model.*;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.random.RandomGenerator;
@@ -47,8 +44,9 @@ public class ReservationDAO
                 Boolean isLate = resultSet.getBoolean("is_late");
                 Car car = ListOfCars.getInstance().searchCarById(resultSet.getInt("car_id"));
                 Customer customer = new CustomerDAO().getCustomerFromDatabaseId(resultSet.getInt("customer_id"));
+                Double amountPaid = resultSet.getDouble("amount_paid");
 
-                Reservation reservation = new Reservation(car,customer,reservationStart,reservationEnd,dateReturned,invoiceNumber,isLate);
+                Reservation reservation = new Reservation(car,customer,reservationStart,reservationEnd,dateReturned,invoiceNumber,isLate,amountPaid);
 
                 return reservation;
             }
@@ -146,6 +144,28 @@ public class ReservationDAO
             System.out.println(e);
         }
 
+        return false;
+    }
+
+
+    public boolean carHasBeenReturned(Date dateReturned, double amountPaid, int invoiceNumber)
+    {
+        sqlQuery = "UPDATE reservations SET actual_return_date = ?, amount_paid = ? WHERE invoice_number = ?";
+
+        try(Connection connection = JDBC.getConnection())
+        {
+            statement = connection.prepareStatement(sqlQuery);
+            statement.setDate(1,dateReturned);
+            statement.setDouble(2,amountPaid);
+            statement.setInt(3,invoiceNumber);
+
+            statement.executeUpdate();
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+        }
         return false;
     }
 

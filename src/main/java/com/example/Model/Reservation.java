@@ -15,14 +15,14 @@ public class Reservation
     private Date dateReturned;
     private Integer invoiceNumber;
     private boolean isLate;
-    private double amountPaid;
+    private Double amountPaid;
     private final int COST_PER_DAY_NOT_LATE = 50;
     private final int COST_PER_DAY_LATE = 150;
     private final int MILLAGE_ALLOWED_PER_DAY = 100;
     private final double EXCESSIVE_MILLAGE_FLAT_FEE = 1.15;
 
     public Reservation(Car car, Customer customer, Date startOfReserve,
-                       Date endOfReserve, Date dateReturned, Integer invoiceNumber, boolean isLate)
+                       Date endOfReserve, Date dateReturned, Integer invoiceNumber, boolean isLate, Double amountPaid)
     {
         this.car = car;
         this.customer = customer;
@@ -32,6 +32,8 @@ public class Reservation
         this.dateReturned = dateReturned;
         this.invoiceNumber = invoiceNumber;
         this.isLate = isLate;
+        this.amountPaid = amountPaid;
+
     }
 
 
@@ -45,7 +47,12 @@ public class Reservation
         String toString = "Invoice Number: " +invoiceNumber + "\nIs A "+ car.getCarModel()+", License Plate: "+car.getLicensePlate()+
                 "\nAnd Is Being Rented By: " + customer.getCustomerName()+
                 "\nAnd Is Being Rented From " + startOfReserve +" to " + endOfReserve+
-                "\nCurrently the car " +lateString;
+                "\nThe Car " +lateString;
+
+        if (amountPaid != null)
+            toString +="\n The Customer Paid: $" + amountPaid;
+
+
 
         return toString;
     }
@@ -56,12 +63,15 @@ public class Reservation
 
         // Reservation has not started yet
         if (currentDate.before(startOfReserve))
+        {
             lateString = "reservation has not started yet";
+            return lateString;
+        }
 
         // Car is still being rented
         if (dateReturned == null)
         {
-            if (currentDate.after(endOfReserve))
+            if (currentDate.toString().compareTo(endOfReserve.toString()) > 0)
                 lateString = "is still actively being used but is late";
             else
                 lateString = "is still actively being used but is not late";
@@ -79,7 +89,7 @@ public class Reservation
     }
 
 
-    public double calculateTotal(int newMiles, int currentFuelLevel)
+    public double calculateTotal(int newMiles, double currentFuelLevel)
     {
         double fuelCost=0;
         double excessiveMileFee=1;
@@ -110,30 +120,6 @@ public class Reservation
         return amountPaid;
     }
 
-
-    public boolean validateReservationDates(Car car, Date startDate, Date endDate)
-    {
-        if (startDate == null || endDate == null)
-        {
-            return false;
-        }
-
-        if (startDate.after(endDate))
-        {
-            return false;
-        }
-
-        if (new ReservationDAO().isCarReserved(car, startDate, endDate))
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-
-
-
     public void setInvoiceNumber(int invoiceNumber)
     {
         this.invoiceNumber = invoiceNumber;
@@ -159,8 +145,23 @@ public class Reservation
         return dateReturned;
     }
 
+    public void setDateReturned(Date dateReturned)
+    {
+        this.dateReturned = dateReturned;
+    }
+
     public int getInvoiceNumber()
     {
         return invoiceNumber;
+    }
+
+    public void setLate(boolean late)
+    {
+        isLate = late;
+    }
+
+    public void setAmountPaid(double amountPaid)
+    {
+        this.amountPaid = amountPaid;
     }
 }

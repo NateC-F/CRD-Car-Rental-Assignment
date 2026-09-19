@@ -12,13 +12,14 @@ public class HybridBehavior implements FuelTypeBehavior
     {
         double halfTank = maxFuelCapacity/2;
         double totalCost = 0.0;
+        double fueldNeeded = maxFuelCapacity - currentFuelLevel;
 
-        if (maxFuelCapacity - currentFuelLevel < halfTank)
+        if (fueldNeeded > halfTank)
         {
             totalCost += halfTank * COST_PER_FIRST_HALF_OF_UNIT_OF_FUEL;
-            totalCost += (halfTank - currentFuelLevel) * COST_PER_SECOND_HALF_OF_UNIT_OF_FUEL;
+            totalCost += (fueldNeeded - halfTank) * COST_PER_SECOND_HALF_OF_UNIT_OF_FUEL;
         }
-        else totalCost += halfTank * COST_PER_FIRST_HALF_OF_UNIT_OF_FUEL;
+        else totalCost += fueldNeeded * COST_PER_FIRST_HALF_OF_UNIT_OF_FUEL;
 
         return totalCost;
     }

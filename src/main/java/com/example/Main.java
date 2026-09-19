@@ -263,6 +263,184 @@ public class Main
         System.out.println("========================");
         System.out.println("      Return A Car      ");
         System.out.println("========================");
+
+        ReservationDAO reservationDAO = new ReservationDAO();
+
+        // ============================================================
+        // 1. Look Up Reservation
+        // ============================================================
+
+        System.out.println("Please enter the invoice number of the reservation:");
+
+        while (!scanner.hasNextInt())
+        {
+            System.out.println("Enter numbers only please");
+            scanner.next();
+        }
+
+        int invoiceNumber = scanner.nextInt();
+        scanner.nextLine();
+
+        Reservation reservation = reservationDAO.lookUpReservation(ReservationSearchType.INVOICE, String.valueOf(invoiceNumber));
+
+        if (reservation == null)
+        {
+            System.out.println("There is no reservation with this invoice.");
+            return;
+        }
+
+        System.out.println();
+        System.out.println(reservation.toString());
+
+        // ============================================================
+        // 2. Check If Reservation Has Already Been Returned
+        // ============================================================
+
+        if (reservation.getDateReturned() != null)
+        {
+            System.out.println("This reservation has already been returned.");
+            return;
+        }
+
+        // ============================================================
+        // 3. Get Current Mileage
+        // ============================================================
+
+        System.out.println();
+        System.out.println("Please enter the car's current mileage:");
+
+        while (!scanner.hasNextInt())
+        {
+            System.out.println("Enter numbers only please");
+            scanner.next();
+        }
+
+        int newMiles = scanner.nextInt();
+        scanner.nextLine();
+
+        if (newMiles < reservation.getCar().getMilesOnCar())
+        {
+            System.out.println("The new mileage cannot be less than the car's current mileage.");
+            return;
+        }
+
+        // ============================================================
+        // 4. Get Current Fuel Level
+        // ============================================================
+
+        System.out.println();
+        System.out.println("Please enter the car's current fuel level:");
+
+        while (!scanner.hasNextDouble())
+        {
+            System.out.println("Enter numbers only please");
+            scanner.next();
+        }
+
+        double currentFuelLevel = scanner.nextDouble();
+        scanner.nextLine();
+
+        if (currentFuelLevel < 0 || currentFuelLevel > reservation.getCar().getMaxFuelCapacity())
+        {
+            System.out.println("Invalid fuel level.");
+            return;
+        }
+
+        // ============================================================
+        // 5. Calculate Total
+        // ============================================================
+        Date returnDate = new Date(System.currentTimeMillis());
+        reservation.setDateReturned(returnDate);
+        boolean isLate = returnDate.after(reservation.getEndOfReserve());
+        reservation.setLate(isLate);
+
+        double total = reservation.calculateTotal(newMiles, currentFuelLevel);
+
+        System.out.println();
+        System.out.println("========================");
+        System.out.println("       Amount Due");
+        System.out.println("========================");
+        System.out.printf("Amount Due: $%.2f%n", total);
+
+        // ============================================================
+        // 6. Select Payment Method
+        // ============================================================
+
+        System.out.println();
+        System.out.println("How will the customer pay?");
+        System.out.println("1) Cash");
+        System.out.println("2) Card");
+
+        int paymentChoice;
+
+        while (!scanner.hasNextInt())
+        {
+            System.out.println("Please enter 1 for Cash or 2 for Card.");
+            scanner.next();
+        }
+
+        paymentChoice = scanner.nextInt();
+        scanner.nextLine();
+
+        String paymentMethod;
+
+        switch (paymentChoice)
+        {
+            case 1:
+                paymentMethod = "Cash";
+                break;
+
+            case 2:
+                paymentMethod = "Card";
+                break;
+
+            default:
+                System.out.println("Invalid payment method.");
+                return;
+        }
+
+        // ============================================================
+        // 7. Confirm Payment
+        // ============================================================
+
+        System.out.printf("Confirm payment of $%.2f by %s? (Y/N): ", total, paymentMethod);
+
+        String paymentConfirmation = scanner.nextLine();
+
+        if (!paymentConfirmation.equalsIgnoreCase("Y"))
+        {
+            System.out.println("Payment cancelled. The car has not been returned.");
+            return;
+        }
+
+        // ============================================================
+        // 8. Update Database
+        // ============================================================
+
+        reservation.getCar().returnCar(newMiles);
+
+        boolean reservationUpdated = reservationDAO.carHasBeenReturned(returnDate, total, invoiceNumber);
+
+        if (!reservationUpdated)
+        {
+            System.out.println("The car was updated, but there was an error updating the reservation.");
+            return;
+        }
+
+        // ============================================================
+        // 9. Display Receipt
+        // ============================================================
+
+        System.out.println();
+        System.out.println("========================");
+        System.out.println("       Car Returned");
+        System.out.println("========================");
+        System.out.println("Invoice Number: " + invoiceNumber);
+        System.out.println("Car: " + reservation.getCar().getCarModel());
+        System.out.println("License Plate: " + reservation.getCar().getLicensePlate());
+        System.out.println("Return Date: " + returnDate);
+        System.out.printf("Amount Paid: $%.2f%n", total);
+        System.out.println("Payment Method: " + paymentMethod);
     }
 
 

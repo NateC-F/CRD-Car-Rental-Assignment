@@ -2,6 +2,7 @@ DROP DATABASE IF EXISTS CarRentalProgram;
 
 CREATE DATABASE CarRentalProgram;
 USE CarRentalProgram;
+SET GLOBAL event_scheduler = ON;
 
 
 
@@ -34,6 +35,7 @@ CREATE TABLE reservations
     reservation_end 		DATE NOT NULL,
 	is_late         		BOOLEAN  NOT NULL DEFAULT FALSE,
     actual_return_date   	DATE,
+    amount_paid				DOUBLE,
 
     CONSTRAINT fk_reservation_customer
         FOREIGN KEY (customer_id)
@@ -49,10 +51,7 @@ CREATE TABLE reservations
         CHECK (reservation_end > reservation_start)
 );
 
-
 -- =================================================================================
-
-
 INSERT INTO cars
     (car_model, car_license_plate, car_type, car_fuel_type,
      car_miles, car_tank_capacity)
@@ -68,3 +67,338 @@ VALUES
     ('2024 Ford Escape',     'VWX802', 'SUV',   'HYBRID',   22109, 14.2),
     ('2020 Chevrolet Tahoe', 'YZA975', 'SUV',   'GAS',      48972, 24.0);
 
+-- =================================================================================
+CREATE EVENT update_cars_when_reservation_starts
+ON SCHEDULE EVERY 1 DAY
+STARTS CURRENT_TIMESTAMP
+DO
+    UPDATE cars c
+    JOIN reservations r ON c.car_id = r.car_id
+    SET c.car_in_use = TRUE
+    WHERE r.reservation_start = CURDATE()
+      AND r.actual_return_date IS NULL;
+-- =================================================================================
+
+
+-- ============================================================
+-- TEST DATA
+-- ============================================================
+
+INSERT INTO customers (customer_name, customer_license)
+VALUES
+    ('Late Test Customer', 'LATE001'),
+    ('On Time Customer', 'ONTIME01'),
+    ('Early Test Customer', 'EARLY001'),
+    ('Hybrid Test Customer', 'HYBRID01'),
+    ('Hybrid Low Fuel Customer', 'HYBRID02');
+
+
+-- ============================================================
+-- TEST RESERVATIONS
+-- ============================================================
+
+
+-- ============================================================
+-- Test 1: LATE RETURN
+-- ============================================================
+--
+-- Reservation: Sept 18 -> Sept 21
+-- Returning on Sept 22 = 1 day late
+--
+-- Car: Toyota Camry
+-- Starting mileage: 25,432
+--
+-- We'll pretend the car comes back with:
+-- Mileage: 25,600  (168 miles)
+-- Fuel: 15.0 gallons
+--
+-- Expected:
+-- 3 reservation days
+-- 1 late day
+-- 4 total days charged at $150/day = $600
+--
+-- Mileage allowance:
+-- 100 miles/day * 3 days = 300 miles
+-- 168 miles used
+-- No excessive mileage fee
+--
+-- Fuel:
+-- Tank capacity = 15.8 gallons
+-- 95% of 15.8 = 15.01 gallons
+-- Returned with 15.0 gallons
+-- 15.0 is slightly below the 95% threshold
+--
+-- Fuel needed:
+-- 15.8 - 15.0 = 0.8 gallons
+-- 0.8 * $3.60 = $2.88
+--
+-- Expected total:
+-- $600 + $2.88 = $602.88
+-- ============================================================
+
+INSERT INTO reservations
+    (customer_id, car_id, reservation_start, reservation_end)
+VALUES
+    (
+        (SELECT customer_id
+         FROM customers
+         WHERE customer_license = 'LATE001'),
+
+        (SELECT car_id
+         FROM cars
+         WHERE car_license_plate = 'ABC123'),
+
+        '2026-09-18',
+        '2026-09-21'
+    );
+
+
+-- ============================================================
+-- Test 2: ON-TIME RETURN
+-- ============================================================
+--
+-- Reservation: Sept 20 -> Sept 22
+-- Returning on Sept 22 = on time
+--
+-- Car: Honda Civic
+-- Starting mileage: 18,765
+--
+-- Test mileage: 18,900 (135 miles)
+-- Fuel: 12.4 gallons
+--
+-- Expected:
+-- 2 rental days
+-- 2 * $50 = $100
+--
+-- Mileage allowance:
+-- 100 miles/day * 2 days = 200 miles
+-- 135 miles used
+-- No excessive mileage
+--
+-- Full fuel tank = no fuel charge
+--
+-- Expected total:
+-- $100.00
+-- ============================================================
+
+INSERT INTO reservations
+    (customer_id, car_id, reservation_start, reservation_end)
+VALUES
+    (
+        (SELECT customer_id
+         FROM customers
+         WHERE customer_license = 'ONTIME01'),
+
+        (SELECT car_id
+         FROM cars
+         WHERE car_license_plate = 'XYZ789'),
+
+        '2026-09-20',
+        '2026-09-22'
+    );
+
+
+-- ============================================================
+-- Test 3: EARLY RETURN
+-- ============================================================
+--
+-- Reservation: Sept 20 -> Sept 25
+-- Returning on Sept 22 = 3 days early
+--
+-- Car: Ford Explorer
+-- Starting mileage: 42,108
+--
+-- Test mileage: 42,250 (142 miles)
+-- Fuel: 18.6 gallons
+--
+-- Expected:
+-- Reservation length = 5 days
+-- Customer returns early
+--
+-- Your current calculateTotal() charges based on the
+-- reservation length, NOT actual days used.
+--
+-- Therefore:
+-- 5 * $50 = $250
+--
+-- Mileage allowance:
+-- 100 miles/day * 5 days = 500 miles
+-- 142 miles used
+-- No excessive mileage
+--
+-- Full fuel = no fuel charge
+--
+-- Expected total:
+-- $250.00
+-- ============================================================
+
+INSERT INTO reservations
+    (customer_id, car_id, reservation_start, reservation_end)
+VALUES
+    (
+        (SELECT customer_id
+         FROM customers
+         WHERE customer_license = 'EARLY001'),
+
+        (SELECT car_id
+         FROM cars
+         WHERE car_license_plate = 'DEF456'),
+
+        '2026-09-20',
+        '2026-09-25'
+    );
+
+
+-- ============================================================
+-- Test 4: ON-TIME HYBRID RETURN WITH REFUEL
+-- ============================================================
+--
+-- Reservation: Sept 20 -> Sept 22
+-- Returning on Sept 22 = on time
+--
+-- Car: Toyota RAV4 (HYBRID)
+-- Starting mileage: 31,542
+-- Tank capacity: 14.5 gallons
+--
+-- Test mileage: 31,700 (158 miles)
+-- Fuel: 12.0 gallons
+--
+-- Expected:
+-- 2 rental days
+-- 2 * $50 = $100
+--
+-- Mileage allowance:
+-- 100 miles/day * 2 days = 200 miles
+-- 158 miles used
+-- No excessive mileage
+--
+-- Fuel needed:
+-- 14.5 - 12.0 = 2.5 gallons
+--
+-- Half tank:
+-- 14.5 / 2 = 7.25 gallons
+--
+-- 2.5 gallons is within the first half of the tank.
+--
+-- Fuel charge:
+-- 2.5 * $2.00 = $5.00
+--
+-- Expected total:
+-- $100 + $5 = $105.00
+-- ============================================================
+
+INSERT INTO reservations
+    (customer_id, car_id, reservation_start, reservation_end)
+VALUES
+    (
+        (SELECT customer_id
+         FROM customers
+         WHERE customer_license = 'HYBRID01'),
+
+        (SELECT car_id
+         FROM cars
+         WHERE car_license_plate = 'GHI321'),
+
+        '2026-09-20',
+        '2026-09-22'
+    );
+
+
+-- ============================================================
+-- Test 5: ON-TIME HYBRID RETURN BELOW HALF TANK
+-- ============================================================
+--
+-- Reservation: Sept 20 -> Sept 22
+-- Returning on Sept 22 = on time
+--
+-- Car: Toyota Prius (HYBRID)
+-- Starting mileage: 29,341
+-- Tank capacity: 11.3 gallons
+--
+-- Test mileage: 29,500 (159 miles)
+-- Fuel: 4.0 gallons
+--
+-- Expected:
+-- 2 rental days
+-- 2 * $50 = $100
+--
+-- Mileage allowance:
+-- 100 miles/day * 2 days = 200 miles
+-- 159 miles used
+-- No excessive mileage
+--
+-- Fuel needed:
+-- 11.3 - 4.0 = 7.3 gallons
+--
+-- Half tank:
+-- 11.3 / 2 = 5.65 gallons
+--
+-- Since 7.3 gallons are needed, more than half the tank
+-- must be refilled.
+--
+-- First 5.65 gallons:
+-- 5.65 * $2.00 = $11.30
+--
+-- Remaining 1.65 gallons:
+-- 1.65 * $3.60 = $5.94
+--
+-- Total fuel charge:
+-- $11.30 + $5.94 = $17.24
+--
+-- Expected total:
+-- $100 + $17.24 = $117.24
+-- ============================================================
+
+INSERT INTO reservations
+    (customer_id, car_id, reservation_start, reservation_end)
+VALUES
+    (
+        (SELECT customer_id
+         FROM customers
+         WHERE customer_license = 'HYBRID02'),
+
+        (SELECT car_id
+         FROM cars
+         WHERE car_license_plate = 'STU135'),
+
+        '2026-09-20',
+        '2026-09-22'
+    );
+
+
+-- ============================================================
+-- MAKE THE TEST CARS CURRENTLY IN USE
+-- ============================================================
+
+UPDATE cars
+SET car_in_use = TRUE
+WHERE car_license_plate IN
+(
+    'ABC123', -- Test 1: Late
+    'XYZ789', -- Test 2: On time
+    'DEF456', -- Test 3: Early
+    'GHI321', -- Test 4: Hybrid
+    'STU135'  -- Test 5: Hybrid below half
+);
+
+
+-- ============================================================
+-- VIEW TEST DATA
+-- ============================================================
+
+SELECT
+    r.invoice_number,
+    c.customer_name,
+    ca.car_model,
+    ca.car_license_plate,
+    r.reservation_start,
+    r.reservation_end,
+    r.is_late,
+    r.actual_return_date,
+    r.amount_paid
+FROM reservations r
+JOIN customers c
+    ON r.customer_id = c.customer_id
+JOIN cars ca
+    ON r.car_id = ca.car_id
+ORDER BY r.invoice_number;
