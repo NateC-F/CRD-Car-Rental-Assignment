@@ -63,7 +63,7 @@ public class Car
 
     public boolean doesCarNeedToBeRefilled(double currentTankLevel)
     {
-        return !(currentTankLevel / maxFuelCapacity > CAR_RETURN_FUEL_PERCENTAGE_THRESHOLD);
+        return !(currentTankLevel / maxFuelCapacity >= CAR_RETURN_FUEL_PERCENTAGE_THRESHOLD);
     }
 
     public boolean hasExtraMiles(int newMiles, int allowedMiles)
